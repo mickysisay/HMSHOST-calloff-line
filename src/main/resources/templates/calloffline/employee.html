@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th = "http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+</head>
+<body>
+<form th:replace="fragment :: form"></form>
+<div th:unless = "${calloffs.equals('yes')}">
+<form method="POST">
+    <button>Call off</button>
+</form>
+
+</div>
+<p>Hi employee</p>
+<p th:text="${name}"></p>
+<p th:text="${'Hi '+name}"></p>
+</body>
+</html>

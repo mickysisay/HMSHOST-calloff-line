@@ -5,10 +5,8 @@
     <title>Title</title>
 </head>
 <body>
-<form method="POST" action="../login/logout">
-    <button>Log Out</button>
-</form>
-<p th:text="${'hi '+ name}">hi stranger</p>
-
+<form th:replace="fragment :: form"></form>
+<p>Hi manager</p>
+<p th:text="${'Hi '+name}"></p>
 </body>
 </html>
