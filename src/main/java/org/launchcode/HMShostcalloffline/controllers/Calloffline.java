@@ -21,13 +21,29 @@ import java.util.Map;
 public class Calloffline {
     static HashMap<String,String> loginInfo =new HashMap<>();
     static HashMap<String, String[]> peopleInfo = new HashMap<>();
+    static String ok="not ok";
+    static{
+        loginInfo.put("betty","password");
+        loginInfo.put("michael","123456789");
+        loginInfo.put("c","1");
+        peopleInfo.put("betty",new String[] {"employee","no"});
+        peopleInfo.put("michael",new String[] {"manager","no"});
+        peopleInfo.put("c",new String[]{"employee","yes"});
+    }
+    //    @RequestMapping(value="")
+//    public String redirect (){
+//
+//        loginInfo.put("betty","password");
+//        loginInfo.put("michael","123456789");
+//        loginInfo.put("c","1");
+//        peopleInfo.put("betty",new String[] {"employee","no"});
+//        peopleInfo.put("michael",new String[] {"manager","no"});
+//        peopleInfo.put("c",new String[]{"employee","yes"});
+//        return "redirect:/login/welcome";
+//    }
     @RequestMapping(value="welcome",method = RequestMethod.GET)
     public String index(HttpServletRequest request, HttpServletResponse response,Model model){
-        loginInfo.put("betty","password");
-      loginInfo.put("michael","123456789");
 
-      peopleInfo.put("betty",new String[] {"Employee","no"});
-      peopleInfo.put("michael",new String[] {"Manager","no"});
       String whatToDisplay = "calloffline/index";
         Cookie[] cookies = request.getCookies();
 
@@ -36,8 +52,14 @@ public class Calloffline {
 
                 if(cookie.getName().equals("user")){
                     model.addAttribute("name", cookie.getValue());
-                    model.addAttribute("calloffs" , "hello");
-                    whatToDisplay = "calloffline/firstpage";
+                    model.addAttribute("calloffs" , peopleInfo.get(cookie.getValue())[1]);
+                    model.addAttribute("ok",ok);
+                    if(peopleInfo.get(cookie.getValue())[0].equals("manager")){
+                       whatToDisplay = "calloffline/manager";
+                   }else if(peopleInfo.get(cookie.getValue())[0].equals("employee")){
+                       whatToDisplay = "calloffline/employee";
+                   }
+                   //  whatToDisplay = "calloffline/firstpage";
                     break;
                 }
             }
@@ -85,8 +107,17 @@ public class Calloffline {
         return "redirect:/login/welcome";
     }
     @RequestMapping(value = "calloff", method = RequestMethod.POST)
-    public String callOff(){
+    public String callOff(Model model,HttpServletRequest request, HttpServletResponse response){
+         Cookie[] cookies = request.getCookies();
+         for(Cookie cookie : cookies){
 
+             if(cookie.getName().equals("user")){
+                 peopleInfo.get(cookie.getValue())[1] =  peopleInfo.get(cookie.getValue())[1].equals("yes") ? "no" : "yes";
+
+
+
+             }
+         }
         return "redirect:/login/welcome";
     }
 }

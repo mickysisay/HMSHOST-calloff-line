@@ -6,14 +6,12 @@
 </head>
 <body>
 <form th:replace="fragment :: form"></form>
-<div th:unless = "${calloffs.equals('yes')}">
-<form method="POST">
+<!--<div th:unless = "${calloffs.equals('yes')}">-->
+<p th:text="${calloffs}"></p>
+
+<form method="POST" action = "../login/calloff">
     <button>Call off</button>
 </form>
-
-</div>
-<p>Hi employee</p>
-<p th:text="${name}"></p>
 <p th:text="${'Hi '+name}"></p>
 </body>
 </html>
