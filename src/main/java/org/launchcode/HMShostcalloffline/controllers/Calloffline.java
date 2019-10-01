@@ -19,28 +19,18 @@ import java.util.Map;
 @Controller
 @RequestMapping(value="login")
 public class Calloffline {
-    static HashMap<String,String> loginInfo =new HashMap<>();
+   // static HashMap<String,String> loginInfo =new HashMap<>();
     static HashMap<String, String[]> peopleInfo = new HashMap<>();
-    static String ok="not ok";
+    static String error;
     static{
-        loginInfo.put("betty","password");
-        loginInfo.put("michael","123456789");
-        loginInfo.put("c","1");
-        peopleInfo.put("betty",new String[] {"employee","no"});
-        peopleInfo.put("michael",new String[] {"manager","no"});
-        peopleInfo.put("c",new String[]{"employee","yes"});
+//        loginInfo.put("000000","password");
+//        loginInfo.put("111111","123456789");
+//        loginInfo.put("222222","1");
+        peopleInfo.put("000000",new String[] {"Betty","password","employee","no"});
+        peopleInfo.put("111111",new String[] {"Michael","123456789","manager","no"});
+        peopleInfo.put("222222",new String[]{"Rob","1","employee","yes"});
     }
-    //    @RequestMapping(value="")
-//    public String redirect (){
-//
-//        loginInfo.put("betty","password");
-//        loginInfo.put("michael","123456789");
-//        loginInfo.put("c","1");
-//        peopleInfo.put("betty",new String[] {"employee","no"});
-//        peopleInfo.put("michael",new String[] {"manager","no"});
-//        peopleInfo.put("c",new String[]{"employee","yes"});
-//        return "redirect:/login/welcome";
-//    }
+
     @RequestMapping(value="welcome",method = RequestMethod.GET)
     public String index(HttpServletRequest request, HttpServletResponse response,Model model){
 
@@ -51,12 +41,13 @@ public class Calloffline {
             for(Cookie cookie : cookies){
 
                 if(cookie.getName().equals("user")){
-                    model.addAttribute("name", cookie.getValue());
-                    model.addAttribute("calloffs" , peopleInfo.get(cookie.getValue())[1]);
-                    model.addAttribute("ok",ok);
-                    if(peopleInfo.get(cookie.getValue())[0].equals("manager")){
-                       whatToDisplay = "calloffline/manager";
-                   }else if(peopleInfo.get(cookie.getValue())[0].equals("employee")){
+                    model.addAttribute("name", peopleInfo.get(cookie.getValue())[0]);
+                    model.addAttribute("calloffs" , peopleInfo.get(cookie.getValue())[3]);
+
+                    if(peopleInfo.get(cookie.getValue())[2].equals("manager")){
+                        model.addAttribute("employee" , getCalloffs());
+                        whatToDisplay = "calloffline/manager";
+                   }else if(peopleInfo.get(cookie.getValue())[2].equals("employee")){
                        whatToDisplay = "calloffline/employee";
                    }
                    //  whatToDisplay = "calloffline/firstpage";
@@ -66,23 +57,34 @@ public class Calloffline {
         }
       return whatToDisplay;
     };
+    public static ArrayList<String[]> getCalloffs(){
+        ArrayList<String[]> info = new ArrayList<>();
+        for(Map.Entry<String,String[]> me:peopleInfo.entrySet()){
+            if(me.getValue()[2].equals("employee")) {
+                info.add(new String[] {me.getValue()[0],me.getValue()[3]});
+            }
+        }
+        return info;
+    }
     @RequestMapping(value="welcome" , method = RequestMethod.POST)
     public String  handleLogin(HttpServletRequest request, HttpServletResponse response, Model model, @RequestParam String username, @RequestParam String password){
       String  whatToDisplay ="redirect:/login/welcome";
         Cookie[] cookies = request.getCookies();
       //for(Map.Entry<String,String> entry : loginInfo.entrySet()){
         try{
-        if(loginInfo.get(username).equals(password)){
+        if(peopleInfo.get(username)[1].equals(password)){
                 Cookie newUser = new Cookie ("user",username);
                     response.addCookie(newUser);
                     newUser.setPath("/login");
-                    model.addAttribute("name",username);
+                    model.addAttribute("name",peopleInfo.get(username)[0]);
 
-                if(peopleInfo.get(username)[0].equals("manager")){
-                whatToDisplay = "calloffline/manager";
-                }else if(peopleInfo.get(username)[0].equals("employee")){
+                if(peopleInfo.get(username)[2].equals("manager")){
+
+                   model.addAttribute("employee" , getCalloffs());
+                    whatToDisplay = "calloffline/manager";
+                }else if(peopleInfo.get(username)[2].equals("employee")){
                 whatToDisplay ="calloffline/employee";
-                model.addAttribute("calloffs",peopleInfo.get(username)[1]);
+                model.addAttribute("calloffs",peopleInfo.get(username)[3]);
                 }
                     //whatToDisplay = "calloffline/firstpage";
            }}catch(NullPointerException e){
@@ -112,10 +114,7 @@ public class Calloffline {
          for(Cookie cookie : cookies){
 
              if(cookie.getName().equals("user")){
-                 peopleInfo.get(cookie.getValue())[1] =  peopleInfo.get(cookie.getValue())[1].equals("yes") ? "no" : "yes";
-
-
-
+                 peopleInfo.get(cookie.getValue())[3] =  peopleInfo.get(cookie.getValue())[3].equals("yes") ? "no" : "yes";
              }
          }
         return "redirect:/login/welcome";

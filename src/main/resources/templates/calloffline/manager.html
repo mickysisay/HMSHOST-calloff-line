@@ -6,7 +6,11 @@
 </head>
 <body>
 <form th:replace="fragment :: form"></form>
-<p>Hi manager</p>
+
 <p th:text="${'Hi '+name}"></p>
+<table>
+    <tr><td>Name</td><td>Have they called off</td></tr>
+    <tr th:each = "employe: ${employee}"><td th:each="i : ${employe}" th:text="${i}"></td></tr>
+</table>
 </body>
 </html>
