@@ -4,17 +4,14 @@
     <meta charset="UTF-8" />
     <title>Title</title>
     <link type="text/css" rel="stylesheet" th:href="@{/css/styles.css}" />
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" />
 </head>
 <body>
-<form method="POST" action="../login/welcome">
-    <label>username: <input name="username" type="text" required/></label><label>Password : <input name="password" type = "password"/></label>
-    <select name="position">
-        <option name="manager">manager</option>
-        <option name="employee">employee</option>
-    </select>>
-    <button>Login</button>
+<div class="box text-center container-fluid"><form class="form-group" method="POST" action="../login/welcome">
+    <label>UserID: <input class="form-control" name="username" type="text" required/></label><br /><label>Password : <input class="form-control" name="password" type = "password" required/></label>
+    <br /><button class="btn btn-outline-info">Login</button>
 </form>
-
+</div>
 <p th:text = "${noLoginData}"></p>
 </body>
 </html>
