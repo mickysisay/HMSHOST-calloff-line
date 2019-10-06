@@ -36,23 +36,35 @@ public class Calloffline {
 
       String whatToDisplay = "calloffline/index";
         Cookie[] cookies = request.getCookies();
+      String usernameCookie="";
+      String passwordCookie="";
 
         if(cookies != null){
             for(Cookie cookie : cookies){
 
-                if(cookie.getName().equals("user")){
-                    model.addAttribute("name", peopleInfo.get(cookie.getValue())[0]);
-                    model.addAttribute("calloffs" , peopleInfo.get(cookie.getValue())[3]);
+                if(cookie.getName().equals("hmshostuser")){
+                    usernameCookie = cookie.getValue();
 
-                    if(peopleInfo.get(cookie.getValue())[2].equals("manager")){
-                        model.addAttribute("employee" , getCalloffs());
-                        whatToDisplay = "calloffline/manager";
-                   }else if(peopleInfo.get(cookie.getValue())[2].equals("employee")){
-                       whatToDisplay = "calloffline/employee";
-                   }
                    //  whatToDisplay = "calloffline/firstpage";
-                    break;
+
                 }
+                if(cookie.getName().equals("hmshostpassword")){
+                    passwordCookie = cookie.getValue();
+                    model.addAttribute("noLoginData",passwordCookie);
+                }
+            }try{
+            if(peopleInfo.get(usernameCookie)[1].equals(passwordCookie)){
+                model.addAttribute("name", peopleInfo.get(usernameCookie)[0]);
+                model.addAttribute("calloffs" , peopleInfo.get(usernameCookie)[3]);
+
+                if(peopleInfo.get(usernameCookie)[2].equals("manager")){
+                    model.addAttribute("employee" , getCalloffs());
+                    whatToDisplay = "calloffline/manager";
+                }else if(peopleInfo.get(usernameCookie)[2].equals("employee")){
+                    whatToDisplay = "calloffline/employee";
+                }
+            }}catch(NullPointerException e){
+
             }
         }
       return whatToDisplay;
@@ -73,9 +85,12 @@ public class Calloffline {
       //for(Map.Entry<String,String> entry : loginInfo.entrySet()){
         try{
         if(peopleInfo.get(username)[1].equals(password)){
-                Cookie newUser = new Cookie ("user",username);
+                Cookie newUser = new Cookie ("hmshostuser",username);
                     response.addCookie(newUser);
                     newUser.setPath("/login");
+            Cookie newUserPassword = new Cookie ("hmshostpassword",password);
+            response.addCookie(newUserPassword);
+            newUserPassword.setPath("/login");
                     model.addAttribute("name",peopleInfo.get(username)[0]);
 
                 if(peopleInfo.get(username)[2].equals("manager")){
@@ -100,10 +115,12 @@ public class Calloffline {
     public String logout(Model model,HttpServletRequest request, HttpServletResponse response){
         Cookie[] cookies = request.getCookies();
 
-        Cookie userNameCookieRemove = new Cookie("user", "hello");
+        Cookie userNameCookieRemove = new Cookie("hmshostuser", "hello");
         userNameCookieRemove.setPath("/login");
         userNameCookieRemove.setMaxAge(0);
-
+        Cookie userNameCookieRemove2 = new Cookie("hmshostpassword", "remove");
+        userNameCookieRemove2.setPath("/login");
+        userNameCookieRemove2.setMaxAge(0);
         response.addCookie(userNameCookieRemove);
         model.addAttribute("name","gfg");
         return "redirect:/login/welcome";
@@ -113,7 +130,7 @@ public class Calloffline {
          Cookie[] cookies = request.getCookies();
          for(Cookie cookie : cookies){
 
-             if(cookie.getName().equals("user")){
+             if(cookie.getName().equals("hmshostuser")){
                  peopleInfo.get(cookie.getValue())[3] =  peopleInfo.get(cookie.getValue())[3].equals("yes") ? "no" : "yes";
              }
          }
